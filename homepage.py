@@ -399,22 +399,26 @@ class Handler(BaseHTTPRequestHandler):
             self._send(HOME)
         elif path == "/about":
             self._send(ABOUT)
-        elif path == "/universe":
-            # Seamlessly redirect to your local React/Vite development server
-            redirect_page = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta http-equiv="refresh" content="0; url=http://localhost:5173">
-                <title>Redirecting to 3D Museum...</title>
-            </head>
-            <body style="background:#000; color:#fff; font-family:sans-serif; text-align:center; padding-top:20vh;">
-                <h2>Launching 3D Museum...</h2>
-                <p>If you are not redirected automatically, <a href="http://localhost:5173" style="color:#38bdf8;">click here</a>.</p>
-            </body>
-            </html>
-            """
-            self._send(redirect_page)
+        elif path == "/universe" or path.startswith("/assets/"):
+            # Serve built React static files from the dist folder
+            target_path = "dist" + (path if path != "/universe" else "/index.html")
+            try:
+                with open(target_path, "rb") as f:
+                    content = f.read()
+                
+                # Set correct content type
+                ct = "text/html"
+                if path.endswith(".js"): ct = "application/javascript"
+                elif path.endswith(".css"): ct = "text/css"
+                elif path.endswith(".jpg") or path.endswith(".png"): ct = "image/jpeg"
+
+                self.send_response(200)
+                self.send_header("Content-Type", ct)
+                self.send_header("Content-Length", str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
+            except FileNotFoundError:
+                self._send("File not found in build", 404)
         else:
             self._send(simple_page("Lost in space", "This page drifted away."), 404)
 
