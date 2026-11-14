@@ -2,7 +2,7 @@
 GHOSTS OF SPACE - real 3D (Three.js) home page
 Abandoned, but not forgotten
 
-Run:  python homepage.py      -> opens http://localhost:8000
+Run:   python homepage.py      -> opens http://localhost:8000
 Pages: /  (Home)   /about  (The Story Behind Space)   /universe
 Needs only Python standard library. Internet is needed for the
 Three.js + Google Fonts CDN files (cdnjs.cloudflare.com).
@@ -28,7 +28,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter','Segoe UI',Arial,
 #gl{position:fixed;inset:0;width:100%;height:100%;z-index:0}
 .vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 35%,rgba(0,0,0,.65) 100%)}
 nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px 4vw;
- background:linear-gradient(#000208cc,transparent)}
+background:linear-gradient(#000208cc,transparent)}
 nav b{font-family:Orbitron;letter-spacing:.2em;font-size:14px}
 nav div a{color:var(--mut);text-decoration:none;margin-left:22px;font-size:13px;letter-spacing:.08em}
 nav div a:hover{color:#fff}
@@ -37,9 +37,9 @@ section{position:relative;z-index:2;min-height:100vh;padding:14vh 6vw;display:fl
 .badge{font-family:Orbitron;font-size:clamp(9px,2vw,12px);letter-spacing:.5em;color:var(--blue);margin-bottom:18px}
 h1{line-height:.95;font-family:Orbitron}
 .g{display:block;font-weight:900;font-size:clamp(54px,16vw,220px);letter-spacing:.05em;color:#f4f8ff;
- text-shadow:0 0 28px rgba(110,170,255,.7),0 0 100px rgba(70,120,255,.45);animation:flick 7s 3s infinite}
+text-shadow:0 0 28px rgba(110,170,255,.7),0 0 100px rgba(70,120,255,.45);animation:flick 7s 3s infinite}
 .o{display:block;font-weight:900;font-size:clamp(24px,8vw,110px);letter-spacing:.38em;padding-left:.38em;color:transparent;
- -webkit-text-stroke:1.5px rgba(190,220,255,.95)}
+-webkit-text-stroke:1.5px rgba(190,220,255,.95)}
 .tag{margin-top:22px;font-family:Orbitron;font-size:clamp(11px,2.6vw,18px);letter-spacing:.3em;color:#b9cdea}
 .tag b{color:#fff}
 .portal{position:relative;display:inline-block;margin-top:44px;padding:2px;border-radius:70px;overflow:hidden;text-decoration:none;cursor:pointer}
@@ -400,7 +400,21 @@ class Handler(BaseHTTPRequestHandler):
         elif path == "/about":
             self._send(ABOUT)
         elif path == "/universe":
-            self._send(simple_page("The Universe", "The graveyard of machines is coming soon. Add your next page here."))
+            # Seamlessly redirect to your local React/Vite development server
+            redirect_page = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta http-equiv="refresh" content="0; url=http://localhost:5173">
+                <title>Redirecting to 3D Museum...</title>
+            </head>
+            <body style="background:#000; color:#fff; font-family:sans-serif; text-align:center; padding-top:20vh;">
+                <h2>Launching 3D Museum...</h2>
+                <p>If you are not redirected automatically, <a href="http://localhost:5173" style="color:#38bdf8;">click here</a>.</p>
+            </body>
+            </html>
+            """
+            self._send(redirect_page)
         else:
             self._send(simple_page("Lost in space", "This page drifted away."), 404)
 
